@@ -1,21 +1,20 @@
-**Forked from  https://github.com/addisonElliott/HttpServer**
-ZLIB, SSl to remove for simplifying
-
 Introduction
 =================
+## No SSL = No cry
+
+**Forked from  https://github.com/addisonElliott/HttpServer**
+Removed ZLIB and SSL libraries for pure Qt support. Due to this limitations this HttpSever edition suits well for development purposes and 
+embedding into other systems for internal API use only. For production when end users have access to content please use [original HttpServer](https://github.com/addisonElliott/HttpServer)
+
 HttpServer is a C++ library that uses the Qt platform to setup a feature rich, easy-to-use HTTP server.
 
-Two existing Qt HTTP server libraries exist out there already, but the licenses are more restrictive (GPL & LGPL), so I decided to create my own:
-
-1. [QtWebApp](https://github.com/fffaraz/QtWebApp)
-2. [qthttpserver](https://github.com/qt-labs/qthttpserver)
 
 Features
 =================
 * Single-threaded with asynchronous callbacks
 * HTTP/1.1
-* TLS support
-* Compression & decompression (GZIP-only)
+* ~~TLS support~~ For TLS support please use [original HttpServer](https://github.com/addisonElliott/HttpServer)
+* ~~Compression & decompression (GZIP-only)~~ For GZIP support please use [original HttpServer](https://github.com/addisonElliott/HttpServer)
 * Easy URL router with regex matching
 * Form parsing (multi-part and www-form-urlencoded)
 * Sending files
@@ -35,33 +34,15 @@ Installing
 =================
 Prerequisites
 -------------
-* Qt & Qt Creator for IDE
-* zlib
-* OpenSSL binaries for TLS support (see [here](https://doc.qt.io/qt-5/ssl.html#enabling-and-disabling-ssl-support))
+* Qt (tested on 5.15.13, should work on a 6.x also)
 * QtPromise for promise support (see [here](https://qtpromise.netlify.app/qtpromise/getting-started.html#installation) for installation instructions)
 
 Building HttpServer
 -------------------------
-1. Open `HttpServer.pro` in Qt Creator.
-2. Create a `common.pri` file in the top-level directory. This will store any specific include & library paths on a per-machine basis.
-   * Append paths to your `zlib` build with `INCLUDEPATH` and `LIBS`
-   * Append paths to your `qtpromise` directory with `INCLUDEPATH` (QtPromise is a header-only library)
-      * Note: You can include the provided `qtpromise.pri` to do this for your. Alternatively, you can install the headers to a system-configured path in which case you don't need to do anything.
-   * Make sure on Windows that the compiled zlib DLL is in your environment `PATH` variable
-3. Build and run the application
-   * Building the application will build the shared library as well as the test application. When you press run, it will run the test application in which you can experiment with the library via the provided URLs
-
-**Note:** Since this is just a normal Qt project with a `pro` file, you can compile the project via the command-line with `qmake` and your platform-specific compiler (i.e. `make` for Linux or `nmake` for Windows).
-
-Example
-=================
-See [here](https://github.com/addisonElliott/HttpServer/blob/master/test/requestHandler.cpp) for example code using HttpServer.
-
-Roadmap & Bugs
-=================
-* TLS session resumption is not supported by Qt currently
-
-Pull requests are welcome (and encouraged) for any or all issues!
+1. qmake -project
+2. qmake
+3. make (nmake)
+4. or through Qt Creator
 
 License
 =================
