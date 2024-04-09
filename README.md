@@ -1,3 +1,6 @@
+**Forked from  https://github.com/addisonElliott/HttpServer**
+ZLIB, SSl to remove for simplifying
+
 Introduction
 =================
 HttpServer is a C++ library that uses the Qt platform to setup a feature rich, easy-to-use HTTP server.
