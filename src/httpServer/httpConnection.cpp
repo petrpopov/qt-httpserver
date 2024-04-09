@@ -1,8 +1,8 @@
 #include "httpConnection.h"
 
 HttpConnection::HttpConnection(HttpServerConfig *config, HttpRequestHandler *requestHandler, qintptr socketDescriptor,
-    QSslConfiguration *sslConfig, QObject *parent) : QObject(parent), config(config), currentRequest(nullptr),
-    currentResponse(nullptr), requestHandler(requestHandler), sslConfig(sslConfig)
+ QObject *parent) : QObject(parent), config(config), currentRequest(nullptr),
+    currentResponse(nullptr), requestHandler(requestHandler)
 {
     timeoutTimer = new QTimer(this);
     keepAliveMode = false;
@@ -19,20 +19,7 @@ HttpConnection::HttpConnection(HttpServerConfig *config, HttpRequestHandler *req
 
 void HttpConnection::createSocket(qintptr socketDescriptor)
 {
-	// If SSL is supported and configured, then create an instance of QSslSocket
-    if (sslConfig)
-	{
-        QSslSocket *sslSocket = new QSslSocket();
-        sslSocket->setSslConfiguration(*sslConfig);
-        socket = sslSocket;
-
-        // Use QOverload because there is another function sslErrors that causes issues
-        // Any errors in TLS handshake will be notified via this signal
-        connect(sslSocket, QOverload<const QList<QSslError> &>::of(&QSslSocket::sslErrors), this,
-            &HttpConnection::sslErrors);
-	}
-    else
-        socket = new QTcpSocket();
+    socket = new QTcpSocket();
 
     if (!socket->setSocketDescriptor(socketDescriptor))
     {
@@ -44,10 +31,6 @@ void HttpConnection::createSocket(qintptr socketDescriptor)
 
     if (config->verbosity >= HttpServerConfig::Verbose::Debug)
         qDebug().noquote() << QString("New incoming connection from %1").arg(socket->peerAddress().toString());
-
-    // Begin TLS handshake if SSL is enabled
-    if (sslConfig)
-        dynamic_cast<QSslSocket *>(socket)->startServerEncryption();
 
     address = socket->peerAddress();
 
@@ -245,23 +228,6 @@ void HttpConnection::socketDisconnected()
 
     timeoutTimer->stop();
     emit disconnected();
-}
-
-void HttpConnection::sslErrors(const QList<QSslError> &errors)
-{
-    if (config->verbosity >= HttpServerConfig::Verbose::Warning)
-    {
-        // Combine all the SSL error messages into one string delineated by commas
-        QString errorMessages = std::accumulate(errors.begin(), errors.end(), QString(""),
-            [](const QString str, const QSslError &error) {
-                return str.isEmpty() ? error.errorString() : str + ", " + error.errorString();
-            });
-
-        qWarning().noquote() << QString("TLS handshake failed for client %1: %2").arg(address.toString()).arg(errorMessages);
-    }
-
-    // Connection will automatically disconnect
-    // A response is not sent back here because it will not be encrypted
 }
 
 HttpConnection::~HttpConnection()

@@ -7,7 +7,6 @@
 #include "util.h"
 
 #include <QBasicTimer>
-#include <QSslKey>
 #include <QTcpServer>
 
 
@@ -21,10 +20,7 @@ private:
     HttpServerConfig config;
     HttpRequestHandler *requestHandler;
 
-    QSslConfiguration *sslConfig;
     std::vector<HttpConnection *> connections;
-
-    void loadSslConfig();
 
 public:
     HttpServer(const HttpServerConfig &config, HttpRequestHandler *requestHandler, QObject *parent = nullptr);

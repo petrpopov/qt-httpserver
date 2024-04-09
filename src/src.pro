@@ -55,9 +55,6 @@ HEADERS += \
 
 include(../common.pri)
 
-win32: LIBS += -lzlib
-unix: LIBS += -lz
-
 unix {
     QMAKE_STRIP =
 

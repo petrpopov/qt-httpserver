@@ -13,7 +13,6 @@
 #include <memory>
 #include <QTcpSocket>
 #include <QThread>
-#include <QSslConfiguration>
 #include <QTimer>
 #include <QtPromise>
 #include <queue>
@@ -41,13 +40,10 @@ private:
     // Store data for each request to enable asynchronous logic
     std::unordered_map<HttpResponse *, HttpDataPtr> data;
 
-    const QSslConfiguration *sslConfig;
-
     void createSocket(qintptr socketDescriptor);
 
 public:
-    HttpConnection(HttpServerConfig *config, HttpRequestHandler *requestHandler, qintptr socketDescriptor,
-        QSslConfiguration *sslConfig = nullptr, QObject *parent = nullptr);
+    HttpConnection(HttpServerConfig *config, HttpRequestHandler *requestHandler, qintptr socketDescriptor, QObject *parent = nullptr);
     ~HttpConnection();
 
 private slots:
@@ -55,7 +51,6 @@ private slots:
     void bytesWritten(qint64 bytes);
     void timeout();
     void socketDisconnected();
-    void sslErrors(const QList<QSslError> &errors);
 
 signals:
     void disconnected();
